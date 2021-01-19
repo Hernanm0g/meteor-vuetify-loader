@@ -2,7 +2,7 @@ Package.describe({
   name: 'zer0th:meteor-vuetify-loader',
   version: '0.1.12',
   // Brief, one-line summary of the package.
-  summary: 'Vuetify`s A La Carte System and Vuetify-loader working on Meteor Default Bundler',
+  summary: 'Vuetify`s TreeShaking System and Sass-loader working on Meteor Default Bundler',
   // URL to the Git repository containing the source code for this package.
   git: 'https://github.com/Hernanm0g/meteor-vuetify-loader',
   // By default, Meteor will default to using README.md for documentation.

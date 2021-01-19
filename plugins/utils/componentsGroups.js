@@ -38,7 +38,7 @@ if(!path.includes("meteor-vuetify-loader")){
   dir = `node_modules/${dir}`
   // console.log("path", path);
   // Lets list all components directories
-  console.log("dir", dir);
+  // console.log("dir", dir);
   readdirSync(dir).forEach(group => {
     // Exclude anything but directories
     if (!statSync(join(dir, group)).isDirectory()) return
