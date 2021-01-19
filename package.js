@@ -1,10 +1,10 @@
 Package.describe({
   name: 'zer0th:meteor-vuetify-loader',
-  version: '0.0.1',
+  version: '0.1.0',
   // Brief, one-line summary of the package.
   summary: 'Vuetify`s A La Carte System and Vuetify-loader working on Meteor Default Bundler',
   // URL to the Git repository containing the source code for this package.
-  git: '',
+  git: 'https://github.com/Hernanm0g/meteor-vuetify-loader',
   // By default, Meteor will default to using README.md for documentation.
   // To avoid submitting documentation, set this field to null.
   documentation: 'README.md'
@@ -12,13 +12,8 @@ Package.describe({
 
 /**
  *
- * RegisterBuildPlugin -> sassCompiler
+ * RegisterBuildPlugin
  * 
- * Needed to put vuetify's .sass into disk-cache.
- * That way, styles resources will only be added once
- * and on the fly (as the client request it).
- * 
- * Uses dart-sass (sass) instead of node-sass (deprecated and unmantained)
  *
  */
 
@@ -26,7 +21,9 @@ Package.registerBuildPlugin({
   name: 'meteorVuetifyLoader',
   use: ['caching-compiler@1.2.2', 'ecmascript@0.14.4'],
   sources: [
+    // Compiles .sass files using dart-sass
     'plugins/vuetify-compile-sass.js',
+    // Loads Vuetify Components on the fly
     'plugins/vuetify-process-sfc.js'
   ],
   npmDependencies: {
@@ -48,6 +45,6 @@ Package.onUse(function(api) {
 Package.onTest(function(api) {
   api.use('ecmascript');
   api.use('tinytest');
-  api.use('meteor-vuetify-loader');
+  api.use('zer0th:meteor-vuetify-loader');
   api.mainModule('meteor-vuetify-loader-tests.js');
 });
