@@ -1,6 +1,6 @@
 Package.describe({
   name: 'zer0th:meteor-vuetify-loader',
-  version: '0.1.0',
+  version: '0.1.01',
   // Brief, one-line summary of the package.
   summary: 'Vuetify`s A La Carte System and Vuetify-loader working on Meteor Default Bundler',
   // URL to the Git repository containing the source code for this package.

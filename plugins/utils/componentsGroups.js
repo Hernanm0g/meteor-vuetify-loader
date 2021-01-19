@@ -35,6 +35,7 @@ let dir = require.resolve('vuetify/es5/components'); // As we use require, we ne
 const components = new Map()
 const path = resolve("")
 if(!path.includes("meteor-vuetify-loader")){
+  dir = `node_modules/${dir}`
   // console.log("path", path);
   // Lets list all components directories
   readdirSync(dir).forEach(group => {
