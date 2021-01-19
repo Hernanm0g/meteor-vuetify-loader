@@ -10,6 +10,13 @@ Package.describe({
   documentation: 'README.md'
 });
 
+
+// Npm Dependencies
+Npm.depends({
+  vuetify: '2.4.2',
+  vue: '2.6.12',
+});
+
 /**
  *
  * RegisterBuildPlugin
@@ -28,8 +35,7 @@ Package.registerBuildPlugin({
   ],
   npmDependencies: {
     'sass': '1.27.0',
-    'vuetify': '2.4.2',
-    'ignore-styles': '5.0.1'
+    'ignore-styles': '5.0.1',
   },
 });
 

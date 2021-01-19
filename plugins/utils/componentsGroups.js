@@ -31,20 +31,21 @@ import {join, resolve} from 'path'
 import 'ignore-styles' // We dont need to import Styles, the absence of this line will cause problems
 /*= End of Imports =*/
 /*=============================================<<<<<*/
-let dir = require.resolve('vuetify/es5/components'); // As we use require, we need to look up inside es5 dir
 const components = new Map()
 const path = resolve("")
 if(!path.includes("meteor-vuetify-loader")){
+  let dir = 'vuetify/es5/components'; // As we use require, we need to look up inside es5 dir
   dir = `node_modules/${dir}`
   // console.log("path", path);
   // Lets list all components directories
+  console.log("dir", dir);
   readdirSync(dir).forEach(group => {
     // Exclude anything but directories
     if (!statSync(join(dir, group)).isDirectory()) return
 
     // Require the default module, where all the subModules will be listed
     // Here's why ignore-styles is important
-    const component = require(`vuetify/es5/components/${group}`).default
+    const component = Npm.require(`vuetify/es5/components/${group}`).default
 
     // $_vuetify_subcomponents tells as which subComponents this module includes
     // eslint-disable-next-line no-prototype-builtins
