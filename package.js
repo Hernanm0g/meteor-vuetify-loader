@@ -38,7 +38,6 @@ Package.onUse(function(api) {
   // We need this to call Package.registerBuildPlugin
   api.use('isobuild:compiler-plugin@1.0.0');
   api.use('akryum:vue-component@0.15.2');
-  api.use('typescript');
 });
 
 // TODO: Unit testing
