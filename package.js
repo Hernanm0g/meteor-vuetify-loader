@@ -1,10 +1,10 @@
 Package.describe({
   name: 'zer0th:meteor-vuetify-loader',
-  version: '0.1.13',
+  version: '0.1.14',
   // Brief, one-line summary of the package.
   summary: 'Vuetify`s TreeShaking System and Sass-loader working on Meteor Default Bundler',
   // URL to the Git repository containing the source code for this package.
-  git: 'https://github.com/Hernanm0g/meteor-vuetify-loader.git',
+  git: 'https://github.com/Hernanm0g/meteor-vuetify-loader',
   // By default, Meteor will default to using README.md for documentation.
   // To avoid submitting documentation, set this field to null.
   documentation: 'README.md'
@@ -12,10 +12,12 @@ Package.describe({
 
 
 // Npm Dependencies
-Npm.depends({
-  vuetify: '2.4.2',
-  vue: '2.6.12',
-});
+// Dont need to install vue or vuetify, as we assume they are installed in
+// Root's app dir
+// Npm.depends({
+//   vuetify: '2.4.2',
+//   vue: '2.6.12',
+// });
 
 /**
  *

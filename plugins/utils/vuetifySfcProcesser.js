@@ -2,7 +2,7 @@
  *
  * vuetifySfcProcesser
  * SinfleFileComponent processer for meteor's integration with vuetify A La Carte's System.
- * Load components as you use them.
+ * Loads components as are mounted by client.
  * 
  * strongly inspired in vuetify-loader: https://github.com/vuetifyjs/vuetify-loader
  * 
@@ -43,19 +43,25 @@ const processSfc = async ({source, basePath, inputFile})=>{
 
   // We need the entire content of the file, not only the <script> tag content.
   const fileContent = inputFile.getContentsAsString()
+
   // Lets extract Vuetify Alike components declared in the <template> tag
-  let components = extractComponents(fileContent)
+  let components =    extractComponents(fileContent)
 
   if(components.length){
+    
+    components = components.filter(v=>v!=="V")
+
     // newContent is the string thats going to be inserted in the script tag.
     let newContent = `\n/***** START meteor-vuetify-loader *****/`
-
-    components = components.filter(v=>v!=="V")
 
     for (const component of components) {
 
       // Discard components that are not in vuetify's dir
       if(!componentsGroups.has(component)) continue
+
+      // Check if component its not already declared in script
+      const regex1 =  `${component}+(?=[\\:,\\,,\\s])`
+      if(!source.match(regex1)) continue
 
       // Insert into the script tag the import declaration for each vuetify component
       newContent+= `\n import { ${component} }  from 'vuetify/lib/components/${componentsGroups.get(component)}'`

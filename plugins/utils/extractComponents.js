@@ -2,9 +2,9 @@
  *
  * extractComponents
  * 
- * Module to extract Vuetify like components inside the <template> tag.
+ * Module to extract Vuetify alike components inside the <template> tag.
  * This means: Anything like <v-something> can be a Vuetify component.
- * So lets extract the possible Components.
+ * So lets extract the possible Vuetify Components.
  * @author <a href="mailto:hernanmog@gmail.com">Zer0th</a>
  * @version 0.1.0
  */
@@ -18,6 +18,7 @@ import kebabToPascal from "./kebabToPascal"
 
 /*= End of Imports =*/
 /*=============================================<<<<<*/
+
 /**
  * 
  * Name: extractComponents
@@ -50,11 +51,11 @@ export default (source)=>{
   // <v-something
   //    attr="anything"      
   // >
-  possibleComponents = possibleComponents.match(/<v-.+?[\s,>]/g)
+  possibleComponents = possibleComponents.match(/<v-.+?[\s,>]/g) || []
   possibleComponents = possibleComponents.map(v=> {
     // remove the opening <
     v= v.replace("<v-", "v-")
-    // Remove spaces
+    // Remove closing > and spaces
     v= v.replace(">", "").trim()
     // Convert to Pascal: v-app-bar => VAppBar
     return kebabToPascal(v)

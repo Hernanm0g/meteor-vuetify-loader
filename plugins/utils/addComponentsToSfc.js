@@ -29,7 +29,7 @@ export default (source, components)=>{
   // First, lets see if the script already has the components prop setted
   let componentsPropMatch =  source.match(/components.+?{/g)
 
-  if(!(componentsPropMatch && componentsPropMatch.length)){
+  if(!componentsPropMatch){
     // Lets insert the components prop to module exports
 
     // ¿Where is export default?

@@ -2,19 +2,18 @@
  *
  * Get All Components Groups
  * 
- * Description: Not all components are in separated Modules, for instance, 
- * the VAppBarNavIcon has not a module for its own, it is inside VApp module, 
+ * Description: Not all Vuetify components are in separated Modules, for instance, 
+ * the VAppBarNavIcon has not a module for its own, it is inside VAppBar module, 
  * so this module exports a Map called components, like:
- * 
  * 
  * {
  *  // ComponentName    =>  ModuleName
- *    "VApp"            => "VApp"
- *    "VAppBarNavIcon"  => "VApp"
+ *    "VAppBar"         => "VAppBar"
+ *    "VAppBarNavIcon"  => "VAppBar"
  * }
  * 
  * So basically, it declares in which module is every component, so you can 
- * do thing like: 
+ * do things like: 
  * import {ComponentName} from 'vuetify/lib/components/ModuleName'
  *
  * 
@@ -26,20 +25,23 @@
 =  Imports  =
 ===============================================>>>>>*/
 
-import {readdirSync, statSync} from 'fs'
-import {join, resolve} from 'path'
+import {readdirSync, statSync}  from 'fs'
+import {join, resolve}          from 'path'
 import 'ignore-styles' // We dont need to import Styles, the absence of this line will cause problems
 /*= End of Imports =*/
 /*=============================================<<<<<*/
-const components = new Map()
-const path = resolve("")
+const components =  new Map()
+const path =        resolve("")
+
+// Just load components from app's node_modules.
 if(!path.includes("meteor-vuetify-loader")){
+
   let dir = 'vuetify/es5/components'; // As we use require, we need to look up inside es5 dir
-  dir = `node_modules/${dir}`
-  // console.log("path", path);
+  dir     = `node_modules/${dir}`
+
   // Lets list all components directories
-  // console.log("dir", dir);
   readdirSync(dir).forEach(group => {
+
     // Exclude anything but directories
     if (!statSync(join(dir, group)).isDirectory()) return
 
@@ -50,14 +52,18 @@ if(!path.includes("meteor-vuetify-loader")){
     // $_vuetify_subcomponents tells as which subComponents this module includes
     // eslint-disable-next-line no-prototype-builtins
     if (component.hasOwnProperty('$_vuetify_subcomponents')) {
+
       Object.keys(component.$_vuetify_subcomponents)
         .forEach(name => {
           // Attach every subComponent to its group reference
           components.set(name, group)
         })
+
     } else {
+
       // Its a single Component Module, lets include it too.
       components.set(group, group)
+
     }
 
     // TODO: Honestly, i dont know if i should include de decache here. Lets see what happens
@@ -70,7 +76,6 @@ if(!path.includes("meteor-vuetify-loader")){
     // decache(`vuetify/es5/components/${group}`)
   })
 }
-
 
 export {
   components

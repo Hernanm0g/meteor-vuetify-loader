@@ -1,6 +1,7 @@
 /**
  *
- * Sets Vuetify Compiler for script tag
+ * Processes .vue files to add vuetify components when
+ * script tag has attribute lang="vuetify"
  *
  * <script lang="vuetify">
  */
@@ -26,24 +27,24 @@ import {processSfc} from './utils/vuetifySfcProcesser'
 /**
  * 
  * Name: globalVueLangVuetify
- * Decription: akryum's vue-component package will use this variable:
+ * Decription: akryum's vue-component package will use this variable
  * 'gobal.vue.lang.vuetify` if the script tag of the Single File Component 
  * has attribute lang="vuetify".
  * 
  * <script lang="vuetify">.
  * 
- * Ref: vue-component/plugin/tag-handler.js@79
+ * Reference: vue-component/plugin/tag-handler.js@79
  *  let compile = global.vue.lang[lang]
  *  let {script, map, useBabel} = compile(sourceContent)
  * 
- * So this function must return an object with prop script, that is the
+ * So this function must return an object with the property script, that is, the
  * script content in the single File Component processed by this compiler and
- * that is going to be post processed by babel. Its here where this
- * compiler inserts: e.g: `import {Vapp} from 'vuetify/lib/components/Vapp' in
+ * that is going to be post-processed by babel. Its here where this
+ * compiler inserts: e.g: `import {Vapp} from 'vuetify/lib/components/VApp' in
  * the script, Babel will do the rest.
  * 
  * And thats it!!, we must look for any vuetify component declared in the <template> tag,
- * such as <v-select> aand insert its import statement in the script. 
+ * such as <v-select> and insert its import statement in the script. 
  * Then return the processed script
  * 
  * @param  {String} {source  Content of <script lang="vuetify"> tag without processing
