@@ -61,7 +61,7 @@ const processSfc = async ({source, basePath, inputFile})=>{
 
       // Check if component its not already declared in script
       const regex1 =  `${component}+(?=[\\:,\\,,\\s])`
-      if(!source.match(regex1)) continue
+      if(source.match(regex1)) continue
 
       // Insert into the script tag the import declaration for each vuetify component
       newContent+= `\n import { ${component} }  from 'vuetify/lib/components/${componentsGroups.get(component)}'`

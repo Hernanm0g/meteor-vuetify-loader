@@ -52,6 +52,7 @@ export default (source)=>{
   //    attr="anything"      
   // >
   possibleComponents = possibleComponents.match(/<v-.+?[\s,>]/g) || []
+  
   possibleComponents = possibleComponents.map(v=> {
     // remove the opening <
     v= v.replace("<v-", "v-")
