@@ -44,13 +44,17 @@ export default (source, components)=>{
 
   let componentsPropIndex = source.indexOf(componentsPropMatch) + componentsPropMatch.length
 
+  // Discard components already declared in components Object
+  components = components.filter(v=>{
+    const regex2 =  `${v}+(?=[\\:,\\,,\\s])`
+    return !source.slice(componentsPropIndex).match(regex2)
+  })
   // Insert each component Name into the components Object
   source = [
     source.slice(0, componentsPropIndex), 
     ...components.map(v=>`\n${v},`) , 
     source.slice(componentsPropIndex)
   ].join('');
-
   return source
 
 }

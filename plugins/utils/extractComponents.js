@@ -15,6 +15,7 @@
 ===============================================>>>>>*/
  
 import kebabToPascal from "./kebabToPascal"
+const uniq = Npm.require("lodash/uniq")
 
 /*= End of Imports =*/
 /*=============================================<<<<<*/
@@ -61,6 +62,7 @@ export default (source)=>{
     // Convert to Pascal: v-app-bar => VAppBar
     return kebabToPascal(v)
   })
+  possibleComponents = uniq(possibleComponents)
   return possibleComponents
 
 }

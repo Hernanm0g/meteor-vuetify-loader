@@ -18,10 +18,19 @@
 import extractComponents                from './extractComponents'
 import addComponentsToSfc               from './addComponentsToSfc'
 import {components as componentsGroups} from './componentsGroups'
+import path from 'path'
+import fs from 'fs'
 
 
 /*= End of Imports =*/
 /*=============================================<<<<<*/
+
+
+const getFilePath = (inputFile, pathInPackage)=>{
+  const sourceRoot = Plugin.convertToOSPath(inputFile._resourceSlot.packageSourceBatch.sourceRoot)
+  const filePath = path.resolve(sourceRoot, pathInPackage)
+  return filePath
+}
 /**
  * Name: processSfc
  * Description: Receives a Sfc source, path and some methods,
@@ -35,36 +44,39 @@ import {components as componentsGroups} from './componentsGroups'
  * @param  {Object} inputFile} Some file methods provided by the vue-component package and the Meteor compiler plugin
  *  
  */
-const processSfc = async ({source, basePath, inputFile})=>{
-
+const processSfc = ({source, basePath, inputFile, dependencyManager})=>{
+  
   if(!basePath) {
     return source
   }
 
   // We need the entire content of the file, not only the <script> tag content.
-  const fileContent = inputFile.getContentsAsString()
+  // Dont use inputFile.getContentsAsString as it will load the previous file,
+  // which results in a wrong compiling. Better read the current content of the
+  // file in the fiesystem
+  const filePath = getFilePath(inputFile, inputFile.getPathInPackage())
+  const fileContent = fs.readFileSync( filePath, {encoding:"utf-8"} );
 
   // Lets extract Vuetify Alike components declared in the <template> tag
   let components =    extractComponents(fileContent)
 
   if(components.length){
     
-    components = components.filter(v=>v!=="V")
+    components = components.filter(component=>componentsGroups.has(component))
 
     // newContent is the string thats going to be inserted in the script tag.
     let newContent = `\n/***** START meteor-vuetify-loader *****/`
 
     for (const component of components) {
 
-      // Discard components that are not in vuetify's dir
-      if(!componentsGroups.has(component)) continue
-
-      // Check if component its not already declared in script
-      const regex1 =  `${component}+(?=[\\:,\\,,\\s])`
+      // Check if component its not already imported in script
+      const regex1 =  `${component}+(?=[\\s\\}]+from)`
       if(source.match(regex1)) continue
 
       // Insert into the script tag the import declaration for each vuetify component
-      newContent+= `\n import { ${component} }  from 'vuetify/lib/components/${componentsGroups.get(component)}'`
+      newContent+= `\n import {${component}}  from 'vuetify/lib/components/${componentsGroups.get(component)}/index.js'`
+      dependencyManager.addDependency(getFilePath(inputFile, `node_modules/vuetify/lib/components/${componentsGroups.get(component)}/index.js`))
+      
     }
     newContent += '\n/***** END meteor-vuetify-loader *****/\n'
 
@@ -75,7 +87,9 @@ const processSfc = async ({source, basePath, inputFile})=>{
     source = newContent + source
     
   }
-  return source
+  return {
+    script:source
+  }
 }
 
 export {

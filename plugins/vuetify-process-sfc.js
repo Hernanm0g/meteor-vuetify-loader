@@ -60,30 +60,25 @@ const globalVueLangVuetify = function ({
   source,
   inputFile,
   basePath,
-  // dependencyManager
-}, cb) {
-  processSfc({
+  dependencyManager
+}) {
+
+  const {script} = processSfc({
     source,
     basePath,
-    inputFile
+    inputFile,
+    dependencyManager
   })
-    .then(source=>{
-      cb(
-        null, 
-        {
-          script:source,
-          useBabel:true
-        }
-      )
-    })
-    .catch(error=>{
-      console.error(error)
-      cb(error, null)
-    })
+
+  return {
+    script,
+    useBabel:true
+  }
+  
 }
 
 // Now Set the global variable to be used by vue-component package
-global.vue.lang.vuetify = Meteor.wrapAsync(globalVueLangVuetify)
+global.vue.lang.vuetify = globalVueLangVuetify
 
 /*= End of Export Vue Compiler as a global var =*/
 /*=============================================<<<<<*/
