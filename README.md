@@ -69,6 +69,7 @@ If it works for you, great!!, enjoy...
 
 ## Importing SFC from packages
 If you have your .vue Single File Components inside Meteor packages, check this out:
+
 1. Ensure that vuetify module its installed in the app's node_modules. If not, use: 
    
    `meteor npm i vuetify`
