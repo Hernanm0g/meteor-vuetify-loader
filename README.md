@@ -56,7 +56,7 @@ If it works for you, great!!, enjoy...
       Anything
     </v-button>    
   <template>    
-  <script lang="vuetify"> //  <--- the magic goes here
+  <script lang="js"> //  <--- the magic goes here
     export default {
       name:"ComponentName",
       data: ()=>({
@@ -87,7 +87,7 @@ If you have your .vue Single File Components inside Meteor packages, check this 
    ```
 4. Put the lang attribute inside the script of your package's SFC.
     ```html
-    <script lang="vuetify"> //  <--- the magic goes here
+    <script lang="js"> //  <--- the magic goes here
       export default {
         name:"YourPackageComponent",
         ...anythingElse
