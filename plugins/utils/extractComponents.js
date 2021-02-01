@@ -62,6 +62,8 @@ export default (source)=>{
     // Convert to Pascal: v-app-bar => VAppBar
     return kebabToPascal(v)
   })
+
+  // Dont repeat components
   possibleComponents = uniq(possibleComponents)
   return possibleComponents
 

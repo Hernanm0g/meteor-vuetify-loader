@@ -25,19 +25,20 @@
 =  Imports  =
 ===============================================>>>>>*/
 
-import {readdirSync, statSync}  from 'fs'
+import {readdirSync, statSync, existsSync}  from 'fs'
 import {join, resolve}          from 'path'
-import 'ignore-styles' // We dont need to import Styles, the absence of this line will cause problems
+import 'ignore-styles' // !important: Dont import Styles, the absence of this line will cause problems
+import config from './loadConfig'
 /*= End of Imports =*/
 /*=============================================<<<<<*/
 const components =  new Map()
 const path =        resolve("")
 
 // Just load components from app's node_modules.
+// Dont look for vuetify inside this package
 if(!path.includes("meteor-vuetify-loader")){
 
-  let dir = 'vuetify/es5/components'; // As we use require, we need to look up inside es5 dir
-  dir     = `node_modules/${dir}`
+  let dir = 'node_modules/vuetify/es5/components'; // As we use require, we need to look up inside es5 dir
 
   // Lets list all components directories
   readdirSync(dir).forEach(group => {
