@@ -27,6 +27,8 @@
 import sass from 'sass';
 const path = Plugin.path;
 const fs = Plugin.fs;
+// import config from './utils/loadConfig'
+
 
 /*= End of Imports =*/
 /*=============================================<<<<<*/
@@ -43,7 +45,6 @@ let _includePaths;
 Plugin.registerCompiler(
   {
     extensions: ['scss', 'sass'], // Will compile .sass and .scss files
-    archMatching: 'web'
   }, 
   () => new SassCompiler()
 );
@@ -103,6 +104,7 @@ Plugin.registerCompiler(
  * statements inside .sass files
  * 
  */
+
 // eslint-disable-next-line no-undef
 class SassCompiler extends MultiFileCachingCompiler {
   constructor() {
@@ -141,15 +143,12 @@ class SassCompiler extends MultiFileCachingCompiler {
   // Motivation: Integration with relative imports paths, such as 
   // those used in Vuetify
   getAbsoluteImportPath(inputFile) {
-    if (inputFile.getPackageName() === null) {
-      if(inputFile.getPathInPackage().includes("vuetify")){
-        return process.env.PWD + '/' + inputFile.getPathInPackage();
-      } else {
-        return '{}/' + inputFile.getPathInPackage();
-      }
+    // If vuetify
+    if(inputFile.getPathInPackage().includes("node_modules/vuetify")){
+      return inputFile.getPathInPackage();
+    } else {
+      return super.getAbsoluteImportPath(inputFile)
     }
-    return '{' + inputFile.getPackageName() + '}/'
-      + inputFile.getPathInPackage();
   }
 
   hasUnderscore(file) {
@@ -157,20 +156,25 @@ class SassCompiler extends MultiFileCachingCompiler {
   }
 
   compileOneFileLater(inputFile, getResult) {
+    
     inputFile.addStylesheet({
       path: inputFile.getPathInPackage(),
     }, async () => {
-      const result = await getResult();
-      return result && {
-        data: result.css,
-        sourceMap: result.sourceMap,
-      };
+      try {
+        const result = await getResult();
+        return result && {
+          data: result.css,
+          sourceMap: result.sourceMap,
+        };
+      } catch (error) {
+        throw error
+      }
+      
     });
   }
 
   // async compileOneFile(inputFile, allFiles) {
   compileOneFile(inputFile, allFiles) {
-
     const referencedImportPaths = [];
 
     var totalImportPath = [];
@@ -225,7 +229,6 @@ class SassCompiler extends MultiFileCachingCompiler {
 
     //Handle import statements found by the sass compiler, used to handle cross-package imports
     const importer = function(url, prev, done) {
-
       if (!totalImportPath.length) {
         totalImportPath.push(prev);
       }
@@ -252,7 +255,6 @@ class SassCompiler extends MultiFileCachingCompiler {
 
       try {
         let parsed = getRealImportPath(importPath);
-        console.log("getRealImportPath" , parsed)
         if (!parsed) {
           parsed = _getRealImportPathFromIncludes(url, getRealImportPath);
         }
@@ -290,8 +292,6 @@ class SassCompiler extends MultiFileCachingCompiler {
       precision: 10,
     };
 
-    // console.log("inputFile", inputFile)
-    // console.log("packageName", inputFile.getPackageName())
     
     options.data = inputFile.getContentsAsBuffer().toString('utf8');
     
@@ -313,7 +313,6 @@ class SassCompiler extends MultiFileCachingCompiler {
       // output = await compileSass(options);
       output = compileSass(options);
     } catch (e) {
-      console.error("Error compiling sass", options);
       inputFile.error({
         message: `Scss compiler error: ${e.formatted}\n`,
         sourcePath: inputFile.getDisplayPath()
