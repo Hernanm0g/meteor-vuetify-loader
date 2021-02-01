@@ -21,16 +21,44 @@ import {components as componentsGroups} from './componentsGroups'
 import path from 'path'
 import fs from 'fs'
 
-
 /*= End of Imports =*/
 /*=============================================<<<<<*/
 
 
+/**
+ * Name: getFilePath
+ * Description: Utility to get the system path for any file inside app.
+ * @param  {Object} inputFile The inputFile provided by vue-meteor package
+ * @param  {String} pathInPackage The file's path inside App's root dir
+ */
 const getFilePath = (inputFile, pathInPackage)=>{
-  const sourceRoot = Plugin.convertToOSPath(inputFile._resourceSlot.packageSourceBatch.sourceRoot)
+
+
+  // Get file's sourceRoot
+  let sourceRoot = Plugin.convertToOSPath(inputFile._resourceSlot.packageSourceBatch.sourceRoot)
+
+  // if component is a Vuetify Component and is inside a Meteor package
+  if(sourceRoot.includes("/packages/") && pathInPackage.includes("node_modules/vuetify")){
+
+    // Look for it in apps node_modules
+    sourceRoot = Plugin.convertToOSPath(process.env.PWD)
+  } 
+  
   const filePath = path.resolve(sourceRoot, pathInPackage)
   return filePath
 }
+/**
+ * Name: getFilePath
+ * Description: Utility to get the system path for any file inside app.
+ * @param  {Object} inputFile The inputFile provided by vue-meteor package
+ * @param  {String} pathInPackage The file's path inside App's root dir
+ */
+const getComponentPath = (component, group, config)=>{
+  let componentPath = `vuetify/lib/components/${group}/index.js`
+  const importStatement =  ` import {${component}}  from '${componentPath}'`
+  return importStatement
+}
+
 /**
  * Name: processSfc
  * Description: Receives a Sfc source, path and some methods,
@@ -44,28 +72,41 @@ const getFilePath = (inputFile, pathInPackage)=>{
  * @param  {Object} inputFile} Some file methods provided by the vue-component package and the Meteor compiler plugin
  *  
  */
-const processSfc = ({source, basePath, inputFile, dependencyManager})=>{
-  
-  if(!basePath) {
+const processSfc = ({source, basePath, inputFile, dependencyManager, config})=>{
+  if(!basePath || !source || !dependencyManager) {
     return source
   }
-
   // We need the entire content of the file, not only the <script> tag content.
   // Dont use inputFile.getContentsAsString as it will load the previous file,
   // which results in a wrong compiling. Better read the current content of the
   // file in the fiesystem
-  const filePath = getFilePath(inputFile, inputFile.getPathInPackage())
-  const fileContent = fs.readFileSync( filePath, {encoding:"utf-8"} );
-
+  // const filePath =    getFilePath(inputFile, inputFile.getPathInPackage())
+  // const fileContent = fs.readFileSync( filePath, {encoding:"utf-8"} );
+  const fileContent = inputFile.getContentsAsString();
   // Lets extract Vuetify Alike components declared in the <template> tag
   let components =    extractComponents(fileContent)
 
   if(components.length){
     
-    components = components.filter(component=>componentsGroups.has(component))
+    components =      components.filter(component=>componentsGroups.has(component))
 
     // newContent is the string thats going to be inserted in the script tag.
     let newContent = `\n/***** START meteor-vuetify-loader *****/`
+
+    // If component is in a package => ignore styles (only .sass) from 'vuetify-src'
+    if(inputFile.getPackageName()){
+      newContent += `
+        import MeteorVuetifyLoaderRegister from 'ignore-styles'
+        import MeteorVuetifyLoaderPath from 'path'
+        MeteorVuetifyLoaderRegister(
+          ['.sass'], 
+          (_, filename)=>{
+            if(!filename.includes("/vuetify/src/")){
+              module.exports = MeteorVuetifyLoaderPath.basename(filename)
+            }
+          }
+        )\n`
+    }
 
     for (const component of components) {
 
@@ -74,14 +115,22 @@ const processSfc = ({source, basePath, inputFile, dependencyManager})=>{
       if(source.match(regex1)) continue
 
       // Insert into the script tag the import declaration for each vuetify component
-      newContent+= `\n import {${component}}  from 'vuetify/lib/components/${componentsGroups.get(component)}/index.js'`
-      dependencyManager.addDependency(getFilePath(inputFile, `node_modules/vuetify/lib/components/${componentsGroups.get(component)}/index.js`))
+      newContent+=    ` \n  ${getComponentPath(component, componentsGroups.get(component), config)}`
+
+      // Add dependency So vue-component can track its cache
+      dependencyManager.addDependency(
+        getFilePath(
+          inputFile, 
+          `node_modules/vuetify/lib/components/${componentsGroups.get(component)}/index.js`,
+          config
+        )
+      )
       
     }
     newContent += '\n/***** END meteor-vuetify-loader *****/\n'
 
     // Lets Add components declaration inside the components:{} prop of the SFC
-    source = addComponentsToSfc(source, components)
+    source = addComponentsToSfc(source, components, )
 
     // Put the imports statements at the beggining of the script tag
     source = newContent + source

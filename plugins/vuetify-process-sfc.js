@@ -11,10 +11,10 @@
 =  Imports  =
 ===============================================>>>>>*/
 
-import {Meteor} from 'meteor/meteor'
 global.vue = global.vue || {}
 global.vue.lang = global.vue.lang || {}
 import {processSfc} from './utils/vuetifySfcProcesser'
+import config from './utils/loadConfig'
 
 /*= End of Imports =*/
 /*=============================================<<<<<*/
@@ -22,7 +22,6 @@ import {processSfc} from './utils/vuetifySfcProcesser'
 /*=============================================>>>>>
 =  Export Vue Compiler as a global var  =
 ===============================================>>>>>*/
-
 
 /**
  * 
@@ -49,9 +48,11 @@ import {processSfc} from './utils/vuetifySfcProcesser'
  * 
  * @param  {String} {source  Content of <script lang="vuetify"> tag without processing
  * @param  {Object} inputFile Object with source file info and methods
- * @param  {String} basePath} Path where the source file is located
+ * @param  {String} basePath Path where the source file is located
+ * @param  {Object} dependencyManager} Object supplied by vue-meteor to add new Dependencies
  * 
- * @returns {Object} { source: <The script compiled>, useBabel:true}
+ * @returns {String}  {source  <The script compiled>
+ * @returns {Boolean} useBabel} Default to true
  * 
  * @author <a href="mailto:hernnanmog@gmail.com">Zer0th</a>
  * @version 0.1.0
@@ -62,12 +63,13 @@ const globalVueLangVuetify = function ({
   basePath,
   dependencyManager
 }) {
-
+  // Use process SFC to generate the script tag
   const {script} = processSfc({
     source,
     basePath,
     inputFile,
-    dependencyManager
+    dependencyManager,
+    config
   })
 
   return {
