@@ -26,16 +26,18 @@ If it works for you, great!!, enjoy...
 
 ## Installation
 
-1. Add akryum vue-component package if you havent already: 
-   
-   `meteor add akryum:vue-component`
-2. Remove fourseven:scss if you have it: 
+1. Remove fourseven:scss if you have it: 
    
    `meteor remove fourseven:scss`
-3. Add this package:
+2. Add this package:
    
    `meteor add zer0th:meteor-vuetify-loader`
-4. Make sure you are importing vuetify/lib instead of vuetify
+3. Add akryum vue-component package if you havent already: 
+   
+   `meteor add akryum:vue-component`
+
+4. Go o to .meteor/packages file and make sure `zer0th:meteor-vuetify-loader` is above `akryum:vue-component`
+5. Make sure you are importing vuetify/lib instead of vuetify
 
 ```javascript
   import Vue from 'vue'
@@ -65,4 +67,30 @@ If it works for you, great!!, enjoy...
 ```
 6. Enjoy!!... Or improve it!!
 
+## Importing SFC from packages
+If you have your .vue Single File Components inside Meteor packages, check this out:
+1. Ensure that vuetify module its installed in the app's node_modules. If not, use: 
+   
+   `meteor npm i vuetify`
+2. You dont need to install Vuetify or Meteor-vuetify-loader (this package) in your Meteor packages, as the compilers will work anywhere.
+3. Make sure your Meteor packages that are exporting SFCs use akryum's vue-component package
+   
+   ```javascript
+
+    Package.onUse(function(api) {
+      ...
+      api.use('akryum:vue-component@0.15.2');
+      ...
+    });
+
+   ```
+4. Put the lang attribute inside the script of your package's SFC.
+    ```html
+    <script lang="vuetify"> //  <--- the magic goes here
+      export default {
+        name:"YourPackageComponent",
+        ...anythingElse
+      }
+    </script>
+    ```
 

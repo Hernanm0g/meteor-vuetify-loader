@@ -1,6 +1,6 @@
 Package.describe({
   name: 'zer0th:meteor-vuetify-loader',
-  version: '0.1.15',
+  version: '0.1.22',
   // Brief, one-line summary of the package.
   summary: 'Vuetify`s TreeShaking System and Sass-loader working on Meteor Default Bundler',
   // URL to the Git repository containing the source code for this package.
@@ -10,15 +10,6 @@ Package.describe({
   documentation: 'README.md'
 });
 
-
-// Npm Dependencies
-// Dont need to install vue or vuetify, as we assume they are installed in
-// Root's app dir
-// Npm.depends({
-//   vuetify: '2.4.2',
-//   vue: '2.6.12',
-// });
-
 /**
  *
  * RegisterBuildPlugin
@@ -26,8 +17,9 @@ Package.describe({
  *
  */
 
+ // Sass Compiler
 Package.registerBuildPlugin({
-  name: 'meteorVuetifyLoader',
+  name: 'meteorVuetifySassLoader',
   use: [
     'caching-compiler@1.2.2', 
     'ecmascript@0.14.4'
@@ -35,11 +27,24 @@ Package.registerBuildPlugin({
   sources: [
     // Compiles .sass files using dart-sass
     'plugins/vuetify-compile-sass.js',
+  ],
+  npmDependencies: {
+    'sass': '1.27.0',
+    'lodash': '4.17.20'
+  },
+});
+
+// Vuetify SFC processer
+Package.registerBuildPlugin({
+  name: 'meteorVuetifySfcLoader',
+  use: [
+    'ecmascript@0.14.4'
+  ],
+  sources: [
     // Loads Vuetify Components on the fly
     'plugins/vuetify-process-sfc.js'
   ],
   npmDependencies: {
-    'sass': '1.27.0',
     'ignore-styles': '5.0.1',
     'lodash': '4.17.20'
   },
@@ -49,7 +54,8 @@ Package.onUse(function(api) {
   api.versionsFrom('1.8');
   // We need this to call Package.registerBuildPlugin
   api.use('isobuild:compiler-plugin@1.0.0');
-  api.use('akryum:vue-component@0.15.2');
+  api.use('akryum:vue-component-dev-server@0.1.4')
+  api.use('akryum:vue-component-dev-client@0.4.7')
 });
 
 // TODO: Unit testing
@@ -57,5 +63,4 @@ Package.onTest(function(api) {
   api.use('ecmascript');
   api.use('tinytest');
   api.use('zer0th:meteor-vuetify-loader');
-  api.mainModule('meteor-vuetify-loader-tests.js');
 });
