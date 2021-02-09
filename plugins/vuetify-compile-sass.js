@@ -25,6 +25,8 @@
 ===============================================>>>>>*/
 
 import sass from 'sass';
+import nodeSass from 'node-sass';
+import { promisify } from 'util';
 const path = Plugin.path;
 const fs = Plugin.fs;
 // import config from './utils/loadConfig'
@@ -38,6 +40,7 @@ var done = false;
 // const compileSass = promisify(sass.render); 
 // We will use sass.renderSync as its 3 times faster than sass.render
 const compileSass = sass.renderSync
+const compileNodeSass = promisify(nodeSass.render)
 let _includePaths;
 
 
@@ -156,7 +159,7 @@ class SassCompiler extends MultiFileCachingCompiler {
   }
 
   compileOneFileLater(inputFile, getResult) {
-    
+    // console.log("file Later", inputFile.getPathInPackage());
     inputFile.addStylesheet({
       path: inputFile.getPathInPackage(),
     }, async () => {
@@ -174,7 +177,7 @@ class SassCompiler extends MultiFileCachingCompiler {
   }
 
   // async compileOneFile(inputFile, allFiles) {
-  compileOneFile(inputFile, allFiles) {
+  async compileOneFile(inputFile, allFiles) {
     const referencedImportPaths = [];
 
     var totalImportPath = [];
@@ -310,8 +313,15 @@ class SassCompiler extends MultiFileCachingCompiler {
 
     let output;
     try {
-      // output = await compileSass(options);
-      output = compileSass(options);
+      // if is vuetify
+      // use sass-loader
+      if(inputFile.getPathInPackage().includes("node_modules/vuetify")){
+        // console.log("Sass Processing:", inputFile.getPathInPackage());
+        output = compileSass(options);
+      } else{
+        // console.log("NodeSass Processing:", inputFile.getPathInPackage());
+        output = await compileNodeSass(options)
+      }
     } catch (e) {
       inputFile.error({
         message: `Scss compiler error: ${e.formatted}\n`,
