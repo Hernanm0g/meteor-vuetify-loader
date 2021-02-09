@@ -32,12 +32,15 @@ If it works for you, great!!, enjoy...
 2. Add this package:
    
    `meteor add zer0th:meteor-vuetify-loader`
-3. Add akryum vue-component package if you havent already: 
+3. Add ignore-styles npm module to your main app:
+   `meteor npm i ignore-syles`
+
+4. Add akryum vue-component package if you havent already: 
    
    `meteor add akryum:vue-component`
 
-4. Go o to .meteor/packages file and make sure `zer0th:meteor-vuetify-loader` is above `akryum:vue-component`
-5. Make sure you are importing vuetify/lib instead of vuetify
+5. Go o to .meteor/packages file and make sure `zer0th:meteor-vuetify-loader` is above `akryum:vue-component`
+6. Make sure you are importing vuetify/lib instead of vuetify
 
 ```javascript
   import Vue from 'vue'
