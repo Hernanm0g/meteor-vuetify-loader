@@ -33,6 +33,7 @@ If it works for you, great!!, enjoy...
    
    `meteor add zer0th:meteor-vuetify-loader`
 3. Add ignore-styles npm module to your main app:
+   
    `meteor npm i ignore-syles`
 
 4. Add akryum vue-component package if you havent already: 
