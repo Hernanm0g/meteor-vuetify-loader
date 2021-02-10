@@ -1,6 +1,6 @@
 Package.describe({
   name: 'zer0th:meteor-vuetify-loader',
-  version: '0.1.26',
+  version: '0.1.27',
   // Brief, one-line summary of the package.
   summary: 'Vuetify`s TreeShaking System and Sass-loader working on Meteor Default Bundler',
   // URL to the Git repository containing the source code for this package.
