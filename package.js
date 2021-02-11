@@ -1,6 +1,6 @@
 Package.describe({
   name: 'zer0th:meteor-vuetify-loader',
-  version: '0.1.27',
+  version: '0.1.28',
   // Brief, one-line summary of the package.
   summary: 'Vuetify`s TreeShaking System and Sass-loader working on Meteor Default Bundler',
   // URL to the Git repository containing the source code for this package.
@@ -25,7 +25,7 @@ Package.registerBuildPlugin({
     'ecmascript@0.14.4'
   ],
   sources: [
-    // Compiles .sass files using dart-sass
+    // Compiles Vuetify .sass files using dart-sass
     'plugins/vuetify-compile-sass.js',
   ],
   npmDependencies: {

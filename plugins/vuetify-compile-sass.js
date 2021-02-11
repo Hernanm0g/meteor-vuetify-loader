@@ -40,6 +40,9 @@ var done = false;
 // const compileSass = promisify(sass.render); 
 // We will use sass.renderSync as its 3 times faster than sass.render
 const compileSass = sass.renderSync
+
+// To keep fourseven:scss compatibility, we must use alse
+// node-sass for non-vuetify .scss
 const compileNodeSass = promisify(nodeSass.render)
 let _includePaths;
 
@@ -310,16 +313,15 @@ class SassCompiler extends MultiFileCachingCompiler {
     if (!options.data.trim()) {
       options.data = '$fakevariable_ae7bslvbp2yqlfba : blue;';
     }
-
     let output;
     try {
       // if is vuetify
       // use sass-loader
       if(inputFile.getPathInPackage().includes("node_modules/vuetify")){
-        // console.log("Sass Processing:", inputFile.getPathInPackage());
+        // console.log("Sass Processing:", inputFile.getDisplayPath(), inputFile.getArch());
         output = compileSass(options);
       } else{
-        // console.log("NodeSass Processing:", inputFile.getPathInPackage());
+        // console.log("NodeSass Processing:", inputFile.getDisplayPath(), inputFile.getArch());
         output = await compileNodeSass(options)
       }
     } catch (e) {

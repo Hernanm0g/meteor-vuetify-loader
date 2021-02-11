@@ -74,15 +74,16 @@ const getComponentPath = (component, group, config)=>{
  */
 const processSfc = ({source, basePath, inputFile, dependencyManager, config})=>{
   if(!basePath || !source || !dependencyManager) {
-    return source
+    return {
+      script:source
+    }
   }
+  // console.log("processing sfc", inputFile.getPathInPackage(), inputFile.getArch());
+
   // We need the entire content of the file, not only the <script> tag content.
-  // Dont use inputFile.getContentsAsString as it will load the previous file,
-  // which results in a wrong compiling. Better read the current content of the
-  // file in the fiesystem
-  // const filePath =    getFilePath(inputFile, inputFile.getPathInPackage())
-  // const fileContent = fs.readFileSync( filePath, {encoding:"utf-8"} );
-  const fileContent = inputFile.getContentsAsString();
+  const filePath =    getFilePath(inputFile, inputFile.getPathInPackage())
+  const fileContent = fs.readFileSync( filePath, {encoding:"utf-8"} );
+  // const fileContent = inputFile.getContentsAsString();
   // Lets extract Vuetify Alike components declared in the <template> tag
   let components =    extractComponents(fileContent)
 
@@ -93,8 +94,8 @@ const processSfc = ({source, basePath, inputFile, dependencyManager, config})=>{
     // newContent is the string thats going to be inserted in the script tag.
     let newContent = `\n/***** START meteor-vuetify-loader *****/`
 
-    // If component is in a package => ignore styles (only .sass) from 'vuetify-src'
-    if(inputFile.getPackageName()){
+    // ignore styles (only .sass) from 'vuetify-src'
+    // if(inputFile.getPackageName()){
       newContent += `
         import MeteorVuetifyLoaderRegister from 'ignore-styles'
         import MeteorVuetifyLoaderPath from 'path'
@@ -106,8 +107,8 @@ const processSfc = ({source, basePath, inputFile, dependencyManager, config})=>{
             }
           }
         )\n`
-    }
-
+    // }
+    // console.log("components", components);
     for (const component of components) {
 
       // Check if component its not already imported in script
