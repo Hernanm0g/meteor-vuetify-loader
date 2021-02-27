@@ -29,7 +29,7 @@ import nodeSass from 'node-sass';
 import { promisify } from 'util';
 const path = Plugin.path;
 const fs = Plugin.fs;
-// import config from './utils/loadConfig'
+const nodeFs = require("fs")
 
 
 /*= End of Imports =*/
@@ -241,7 +241,7 @@ class SassCompiler extends MultiFileCachingCompiler {
     };
 
     //Handle import statements found by the sass compiler, used to handle cross-package imports
-    const importer = function(url, prev, done) {
+    const importer = function(url, prev) {
       if (!totalImportPath.length) {
         totalImportPath.push(prev);
       }
@@ -266,8 +266,7 @@ class SassCompiler extends MultiFileCachingCompiler {
         importPath = importPath.substr(accPosition,importPath.length);
       }
 
-      try {
-        let parsed = getRealImportPath(importPath);
+      let parsed = getRealImportPath(importPath);
         if (!parsed) {
           parsed = _getRealImportPathFromIncludes(url, getRealImportPath);
         }
@@ -278,15 +277,14 @@ class SassCompiler extends MultiFileCachingCompiler {
 
         if (parsed.absolute) {
           sourceMapPaths.push(parsed.path);
-          done({ contents: fs.readFileSync(parsed.path, 'utf8')});
+ 
+          return { contents: fs.readFileSync(parsed.path, 'utf8') } 
         } else {
           referencedImportPaths.push(parsed.path);
           sourceMapPaths.push(decodeFilePath(parsed.path));
-          done({ contents: allFiles.get(parsed.path).getContentsAsString()});
+
+          return { contents: allFiles.get(parsed.path).getContentsAsString() }
         }
-      } catch (e) {
-        return done(e);
-      }
 
     }
 
@@ -308,6 +306,31 @@ class SassCompiler extends MultiFileCachingCompiler {
 
     
     options.data = inputFile.getContentsAsBuffer().toString('utf8');
+
+    // Add user variables if exists file and current file is _variables
+    // console.log(inputFile.getPathInPackage());
+
+    _prepareNodeSassOptions()
+    if(this.processWithDartSass(inputFile) && _includePaths && _includePaths.length){
+
+      let userVariablesPath = _includePaths.find(v=>{
+        const possiblePath = process.env.PWD + (v.replace("{}", "")) + "user_variables.scss"
+        return fileExists(possiblePath) 
+      })
+
+      if(userVariablesPath){
+        const regex1 = new RegExp( '@import.+', 'g' );
+  
+        regex1.test(options.data);
+        const lastIndexOfImport = regex1.lastIndex
+
+        options.data = [
+          options.data.slice(0, lastIndexOfImport), 
+          `\n@import 'user_variables.scss'\n` , 
+          options.data.slice(lastIndexOfImport)
+        ].join('');
+      }
+    }
     
     options.file = this.getAbsoluteImportPath(inputFile);
 
@@ -334,7 +357,7 @@ class SassCompiler extends MultiFileCachingCompiler {
       }
     } catch (e) {
       inputFile.error({
-        message: `Scss compiler error: ${e.formatted}\n`,
+        message: `Scss compiler error: ${e.formatted},\n`,
         sourcePath: inputFile.getDisplayPath()
       });
       return null;
@@ -370,15 +393,13 @@ class SassCompiler extends MultiFileCachingCompiler {
 
 
 function _getRealImportPathFromIncludes(importPath, getRealImportPathFn){
-
   _prepareNodeSassOptions();
-
+  
   let possibleFilePath, foundFile;
-
+  
   for (let includePath of _includePaths) {
     possibleFilePath = path.join(includePath, importPath);
     foundFile = getRealImportPathFn(possibleFilePath);
-
     if (foundFile) {
       return foundFile;
     }

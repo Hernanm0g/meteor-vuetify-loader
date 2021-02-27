@@ -47,13 +47,19 @@ If it works for you, great!!, enjoy...
   import Vue from 'vue'
 
   /*--------  The magic goes here  --------*/
+
+
   import Vuetify from 'vuetify/lib/framework'
+  // IMPORTANT!!  These lighter import will break HMR.
+  // If you need HMR while developing, use the standard:
+  // import Vuetify from 'vuetify/lib'
 
   // Import colors if you want to use colors presets
   import 'vuetify/lib/util/colors'
 
   // Import directives if you want to use them
   import 'vuetify/lib/directives'
+
 
   Vue.use(Vuetify)
 
@@ -77,6 +83,27 @@ If it works for you, great!!, enjoy...
   </script>
 ```
 6. Enjoy!!... Or improve it!!
+
+## SASS Variables
+In order to use the custom [sass-variables](https://vuetifyjs.com/en/features/sass-variables), do this:
+1. Create a file named user_variables.scss, anywhere inside imports/ folder. for instance: `/imports/ui/styles/vuetify/user_variables.scss`
+2. Put your variables definitions inside user_variables.scss:
+    ```less
+    $btn-sizes: (
+      'default': 60,
+      'large': 90
+    );
+    ```
+3. Create a file named `scss-config.json` as a direct child of your main app folder.
+4. Create an array inside the prop includePaths, and place there the **PATH** (without the file name!!) of the folder where user_variables.scss is. 
+    ```json
+    {
+      "includePaths": [
+        "{}/imports/ui/styles/vuetify/"
+      ]
+    }
+    ```
+Thats it!
 
 ## Importing SFC from packages
 If you have your .vue Single File Components inside Meteor packages, check this out:
