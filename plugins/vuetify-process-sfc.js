@@ -64,7 +64,6 @@ const globalVueLangVuetify = function ({
   dependencyManager
 }) {
   // Use process SFC to generate the script tag
-  // console.log("******", ARCH: inputFile.getArch(), "***********");
   // console.log("input", source);
   const {script} = processSfc({
     source,

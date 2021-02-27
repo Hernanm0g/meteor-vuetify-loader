@@ -1,6 +1,6 @@
 Package.describe({
   name: 'zer0th:meteor-vuetify-loader',
-  version: '0.1.28',
+  version: '0.1.29',
   // Brief, one-line summary of the package.
   summary: 'Vuetify`s TreeShaking System and Sass-loader working on Meteor Default Bundler',
   // URL to the Git repository containing the source code for this package.
@@ -55,8 +55,6 @@ Package.onUse(function(api) {
   api.versionsFrom('1.8');
   // We need this to call Package.registerBuildPlugin
   api.use('isobuild:compiler-plugin@1.0.0');
-  api.use('akryum:vue-component-dev-server@0.1.4')
-  api.use('akryum:vue-component-dev-client@0.4.7')
 });
 
 // TODO: Unit testing
