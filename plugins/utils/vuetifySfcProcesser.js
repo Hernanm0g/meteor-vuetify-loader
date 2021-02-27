@@ -116,17 +116,7 @@ const processSfc = ({source, basePath, inputFile, dependencyManager, config})=>{
       if(source.match(regex1)) continue
 
       // Insert into the script tag the import declaration for each vuetify component
-      newContent+=    ` \n  ${getComponentPath(component, componentsGroups.get(component), config)}`
-
-      // Add dependency So vue-component can track its cache
-      dependencyManager.addDependency(
-        getFilePath(
-          inputFile, 
-          `node_modules/vuetify/lib/components/${componentsGroups.get(component)}/index.js`,
-          config
-        )
-      )
-      
+      newContent+=    ` \n  ${getComponentPath(component, componentsGroups.get(component), config)}`  
     }
     newContent += '\n/***** END meteor-vuetify-loader *****/\n'
 

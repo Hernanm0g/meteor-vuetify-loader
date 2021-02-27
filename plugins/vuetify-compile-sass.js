@@ -145,12 +145,18 @@ class SassCompiler extends MultiFileCachingCompiler {
     return !this.hasUnderscore(pathInPackage);
   }
 
+  // Check if file must be processed with dart sass
+  processWithDartSass(inputFile){
+    return inputFile.getPathInPackage().includes("node_modules/vuetify") 
+    // || inputFile.getPathInPackage().includes("/styles/vuetify/") 
+  }
+
   // Overrides MultiFileCachingCompile
   // Motivation: Integration with relative imports paths, such as 
   // those used in Vuetify
   getAbsoluteImportPath(inputFile) {
-    // If vuetify
-    if(inputFile.getPathInPackage().includes("node_modules/vuetify")){
+    // If Vuetify...
+    if(this.processWithDartSass(inputFile)){
       return inputFile.getPathInPackage();
     } else {
       return super.getAbsoluteImportPath(inputFile)
@@ -162,11 +168,12 @@ class SassCompiler extends MultiFileCachingCompiler {
   }
 
   compileOneFileLater(inputFile, getResult) {
-    // console.log("file Later", inputFile.getPathInPackage());
+    // console.log("file Later", inputFile.getDisplayPath(), "FOR:", inputFile.getArch())
     inputFile.addStylesheet({
       path: inputFile.getPathInPackage(),
     }, async () => {
       try {
+        // console.log("Async Compiling",inputFile.getDisplayPath(), "FOR:", inputFile.getArch())
         const result = await getResult();
         return result && {
           data: result.css,
@@ -296,6 +303,7 @@ class SassCompiler extends MultiFileCachingCompiler {
       importer,
       includePaths: [],
       precision: 10,
+      outputStyle: "compressed"
     };
 
     
@@ -316,12 +324,12 @@ class SassCompiler extends MultiFileCachingCompiler {
     let output;
     try {
       // if is vuetify
-      // use sass-loader
-      if(inputFile.getPathInPackage().includes("node_modules/vuetify")){
-        // console.log("Sass Processing:", inputFile.getDisplayPath(), inputFile.getArch());
+      //use sass-loader
+      if(this.processWithDartSass(inputFile)){
+        // console.log("DartSass Processing:", inputFile.getDisplayPath(), inputFile.getArch());
         output = compileSass(options);
       } else{
-        // console.log("NodeSass Processing:", inputFile.getDisplayPath(), inputFile.getArch());
+        // console.log("NodeSass Processing:", inputFile.getDisplayPath(), "FOR:", inputFile.getArch());
         output = await compileNodeSass(options)
       }
     } catch (e) {

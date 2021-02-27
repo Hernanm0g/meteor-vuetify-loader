@@ -55,8 +55,6 @@ Package.onUse(function(api) {
   api.versionsFrom('1.8');
   // We need this to call Package.registerBuildPlugin
   api.use('isobuild:compiler-plugin@1.0.0');
-  api.use('akryum:vue-component-dev-server@0.1.4')
-  api.use('akryum:vue-component-dev-client@0.4.7')
 });
 
 // TODO: Unit testing

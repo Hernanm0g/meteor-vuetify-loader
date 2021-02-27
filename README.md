@@ -41,12 +41,19 @@ If it works for you, great!!, enjoy...
    `meteor add akryum:vue-component`
 
 5. Go o to .meteor/packages file and make sure `zer0th:meteor-vuetify-loader` is above `akryum:vue-component`
-6. Make sure you are importing vuetify/lib instead of vuetify
+6. Make sure you are importing vuetify/lib/framework instead of vuetify. This will reduce your first client bundle!!.
 
 ```javascript
   import Vue from 'vue'
 
-  import Vuetify from 'vuetify/lib' // <-- The magic goes here
+  /*--------  The magic goes here  --------*/
+  import Vuetify from 'vuetify/lib/framework'
+
+  // Import colors if you want to use colors presets
+  import 'vuetify/lib/util/colors'
+
+  // Import directives if you want to use them
+  import 'vuetify/lib/directives'
 
   Vue.use(Vuetify)
 
