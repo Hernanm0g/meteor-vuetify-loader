@@ -94,20 +94,18 @@ const processSfc = ({source, basePath, inputFile, dependencyManager, config})=>{
     // newContent is the string thats going to be inserted in the script tag.
     let newContent = `\n/***** START meteor-vuetify-loader *****/`
 
-    // ignore styles (only .sass) from 'vuetify-src'
-    // if(inputFile.getPackageName()){
-      newContent += `
-        import MeteorVuetifyLoaderRegister from 'ignore-styles'
-        import MeteorVuetifyLoaderPath from 'path'
-        MeteorVuetifyLoaderRegister(
-          ['.sass'], 
-          (_, filename)=>{
-            if(!filename.includes("/vuetify/src/")){
-              module.exports = MeteorVuetifyLoaderPath.basename(filename)
-            }
+    // ignore styles (only .sass) from 'vuetify-src' as they are precompiled
+    newContent += `
+      import MeteorVuetifyLoaderRegister from 'ignore-styles'
+      import MeteorVuetifyLoaderPath from 'path'
+      MeteorVuetifyLoaderRegister(
+        ['.sass'], 
+        (_, filename)=>{
+          if(!filename.includes("/vuetify/src/")){
+            module.exports = MeteorVuetifyLoaderPath.basename(filename)
           }
-        )\n`
-    // }
+        }
+      )\n`
     // console.log("components", components);
     for (const component of components) {
 
@@ -117,8 +115,20 @@ const processSfc = ({source, basePath, inputFile, dependencyManager, config})=>{
 
       // Insert into the script tag the import declaration for each vuetify component
       newContent+=    ` \n  ${getComponentPath(component, componentsGroups.get(component), config)}`  
+
+      // Add dependency So vue-component can track its cache
+      
+      dependencyManager.addDependency(
+        getFilePath(
+          inputFile, 
+          `node_modules/vuetify/lib/components/${componentsGroups.get(component)}/index.js`,
+          config
+        )
+      )
     }
     newContent += '\n/***** END meteor-vuetify-loader *****/\n'
+
+    
 
     // Lets Add components declaration inside the components:{} prop of the SFC
     source = addComponentsToSfc(source, components, )
