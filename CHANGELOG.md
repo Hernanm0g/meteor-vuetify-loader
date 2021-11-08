@@ -1,8 +1,12 @@
 # Changelog
 
-## @0.1.40 - 2021-10-22
+## @0.1.41 - 2021-10-22
 
 - Upgraded node_sass to v 4.14.1
+
+## @0.1.40 - 2021-11-07
+
+- Fixed bug on importing scss user variables
 ## @0.1.30 - 2021-02-27
 
 - Sass-variables integrated via includePaths in scss-config.json

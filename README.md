@@ -93,6 +93,9 @@ In order to use the custom [sass-variables](https://vuetifyjs.com/en/features/sa
       'default': 60,
       'large': 90
     );
+    $material-light: (
+      'background': #F06292, 
+    );
     ```
 3. Create a file named `scss-config.json` as a direct child of your main app folder.
 4. Create an array inside the prop includePaths, and place there the **PATH** (without the file name!!) of the folder where user_variables.scss is. 
