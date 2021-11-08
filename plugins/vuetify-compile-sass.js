@@ -319,15 +319,9 @@ class SassCompiler extends MultiFileCachingCompiler {
       })
 
       if(userVariablesPath){
-        const regex1 = new RegExp( '@import.+', 'g' );
-  
-        regex1.test(options.data);
-        const lastIndexOfImport = regex1.lastIndex
-
         options.data = [
-          options.data.slice(0, lastIndexOfImport), 
-          `\n@import 'user_variables.scss'\n` , 
-          options.data.slice(lastIndexOfImport)
+          `@import 'user_variables.scss'\n` , 
+          options.data
         ].join('');
       }
     }
