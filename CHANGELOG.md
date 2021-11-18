@@ -1,6 +1,6 @@
 # Changelog
 
-## @0.1.41 - 2021-10-22
+## @0.1.41 - 2021-11-22
 
 - Upgraded node_sass to v 4.14.1
 
